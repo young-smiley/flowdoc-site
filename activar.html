@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Activar créditos — Spectra FlowDoc</title>
+<style>
+  :root { --azul: #2350F5; --navy: #0B1640; --muted: #586079; --bg: #F2F4FA; --campo: #E8EDF8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--navy); font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 480px; margin: 0 auto; padding: 32px 16px 48px; }
+  .card { background: #fff; border-radius: 22px; padding: 24px 20px; box-shadow: 0 8px 24px rgba(30,60,180,.12); }
+  h1 { font-size: 24px; line-height: 1.15; margin: 0 0 6px; }
+  p { margin: 0 0 14px; }
+  .nota { color: var(--muted); font-size: 14px; }
+  .btn { display: block; width: 100%; text-align: center; padding: 15px 18px; border-radius: 27px; font-weight: 700; font-size: 16px; text-decoration: none; border: 0; cursor: pointer; }
+  .principal { background: linear-gradient(90deg, #4C74FF, #2350F5); color: #fff; margin: 18px 0 10px; }
+  .secundario { background: #fff; color: #1534C9; border: 1.5px solid #1534C9; }
+  .codigo { background: var(--campo); border-radius: 14px; padding: 12px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; word-break: break-all; margin: 8px 0 12px; }
+  .erro { color: #E0533D; }
+</style>
+</head>
+<body>
+<main>
+<div class="card" id="ok" hidden>
+  <h1>Os teus créditos</h1>
+  <p class="nota">Toca no botão para abrir o FlowDoc e activar os créditos neste telemóvel.</p>
+  <a class="btn principal" id="abrir" href="#">Activar no FlowDoc</a>
+  <p class="nota">Se o aplicativo não abrir: copia o código, abre o FlowDoc em Perfil › Créditos e carrega em <b>Colar código</b>.</p>
+  <div class="codigo" id="codigo"></div>
+  <button class="btn secundario" id="copiar">Copiar código</button>
+</div>
+<div class="card" id="vazio" hidden>
+  <h1>Link incompleto</h1>
+  <p class="erro">Este link não traz nenhum código.</p>
+  <p class="nota">Copia a mensagem inteira que recebeste no WhatsApp e cola-a no FlowDoc, em Perfil › Créditos › Colar código.</p>
+</div>
+<p class="nota" style="text-align:center;margin-top:18px"><a href="./" style="color:#2350F5">Spectra FlowDoc</a> · <a href="termos.html" style="color:#2350F5">Termos</a></p>
+</main>
+<script>
+  // O código vem depois do # (não chega ao servidor). Só é aceite pelo telemóvel para que foi feito.
+  var c = (location.hash || '').replace(/^#/, '');
+  var m = c.match(/FD1\.[A-Za-z0-9_-]{100,110}/);
+  if (m) {
+    var codigo = m[0];
+    document.getElementById('ok').hidden = false;
+    document.getElementById('codigo').textContent = codigo;
+    document.getElementById('abrir').href =
+      'intent://activar?c=' + codigo + '#Intent;scheme=flowdoc;package=mz.gerador.gerador_academico;end';
+    document.getElementById('copiar').onclick = function () {
+      var b = this;
+      function feito() { b.textContent = 'Copiado'; }
+      if (navigator.clipboard) { navigator.clipboard.writeText(codigo).then(feito, function () {}); }
+      else { var t = document.createElement('textarea'); t.value = codigo; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); feito(); }
+    };
+  } else {
+    document.getElementById('vazio').hidden = false;
+  }
+</script>
+</body>
+</html>
